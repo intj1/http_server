@@ -1,5 +1,6 @@
 use super::method::{MethodError, Method};
 use super::util::get_next_word;
+use super::query_string::QueryString;
 use std::convert::TryFrom;
 use std::fmt::{Display, Debug};
 use std::error::Error;
@@ -9,7 +10,7 @@ use std::str::Utf8Error;
 #[derive(Debug)]
 pub struct Request<'buf> {
     path: &'buf str,
-    query_string: Option<&'buf str>,
+    query_string: Option<QueryString<'buf>>,
     method: Method
 }
 
@@ -35,7 +36,7 @@ impl<'buf> TryFrom<&'buf [u8]> for Request<'buf> {
 
         let mut query_string = None;
         if let Some(i) = path.find('?') {
-            query_string = Some(&path[i + 1..]);
+            query_string = Some(QueryString::from(&path[i + 1..]));
             path = &path[i..]
         }
 

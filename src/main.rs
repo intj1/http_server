@@ -1,5 +1,7 @@
+#![allow(dead_code)]
 use http::server::Server;
 mod http;
+
 fn main() {
 
     let addr = "127.0.0.1".to_owned();
