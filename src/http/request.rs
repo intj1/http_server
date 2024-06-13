@@ -3,7 +3,6 @@ use super::util::get_next_word;
 use super::query_string::QueryString;
 use std::convert::TryFrom;
 use std::fmt::{Display, Debug};
-use std::error::Error;
 use std::str;
 use std::str::Utf8Error;
 
@@ -24,13 +23,13 @@ impl<'buf> TryFrom<&'buf [u8]> for Request<'buf> {
         dbg!(method);
         let (mut path, req) = get_next_word(req).ok_or(ParseError::InvalidRequest)?;
         dbg!(path);
-        // let (protocol, _) = get_next_word(req).ok_or(ParseError::InvalidRequest)?;
-        // dbg!(protocol);
+        let (protocol, _) = get_next_word(req).ok_or(ParseError::InvalidRequest)?;
+        dbg!(protocol);
 
 
-        // if protocol != "HTTP/1.1" {
-        //     return Err(ParseError::InvalidProtocol);
-        // }
+        if protocol != "HTTP/1.1" {
+            return Err(ParseError::InvalidProtocol);
+        }
 
         let method: Method = method.parse()?;
 
@@ -91,8 +90,4 @@ impl Debug for ParseError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
        write!(f, "{}", self.message()) 
     }
-}
-
-impl Error for ParseError {
-
 }
